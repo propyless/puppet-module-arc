@@ -87,9 +87,13 @@ class arc (
   # </define os default values>
 
   # <convert stringified booleans>
-  if is_bool($create_rndrelease) == true {
+  if $create_rndrelease == 'unmanaged' {
+    $create_rndrelease_real = 'unmanaged'
+  }
+  elsif is_bool($create_rndrelease) == true {
     $create_rndrelease_real = $create_rndrelease
-  } else {
+  }
+  else {
     $create_rndrelease_real = str2bool($create_rndrelease)
   }
 
@@ -145,7 +149,9 @@ class arc (
 
   # <validating variables>
 
-  validate_bool($create_rndrelease_real)
+  if $create_rndrelease_real != 'unmanaged' {
+    validate_bool($create_rndrelease_real)
+  }
   validate_bool($create_symlink_real)
   validate_bool($install_package_real)
 
@@ -178,11 +184,14 @@ class arc (
     $rndrelease_ensure = 'present'
   }
 
-  file { 'arc_rndrelease':
-    ensure  => $rndrelease_ensure,
-    path    => '/etc/rndrelease',
-    mode    => '0644',
-    content => "${rndrelease_version_real}\n",
+  # If  unmanaged do not touch the file
+  if $create_rndrelease_real != 'unmanaged' {
+    file { 'arc_rndrelease':
+      ensure  => $rndrelease_ensure,
+      path    => '/etc/rndrelease',
+      mode    => '0644',
+      content => "${rndrelease_version_real}\n",
+    }
   }
 
   if $::operatingsystem == 'Ubuntu' {

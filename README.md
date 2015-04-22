@@ -30,6 +30,8 @@ create_rndrelease
 =================
 Boolean to trigger creation of /etc/rndrelease file.
 If set to false /etc/rndrelease will be deleted.
+If set to unmanged the /etc/rndrelease will not
+be modified or deleted.
 
 - *Default*: true
 
